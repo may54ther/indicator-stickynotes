@@ -195,7 +195,8 @@ class StickyNote:
         thresh_sat = 1.05 - 1.7*((v-1)**2)
         suffix = "-dark" if s >= thresh_sat else ""
         iconfiles = {"imgAdd":"add", "imgClose":"close", "imgDropdown":"menu",
-                "imgLock":"lock", "imgUnlock":"unlock", "imgResizeR":"resizer"}
+                "imgLock":"lock", "imgUnlock":"unlock"}
+                # "imgLock":"lock", "imgUnlock":"unlock", "imgResizeR":"resizer"}
         for img, filename in iconfiles.items():
             getattr(self, img).set_from_file(
                     os.path.join(os.path.dirname(__file__), "..","Icons/" +
