@@ -65,13 +65,15 @@ class StickyNote:
         self.winMain = self.builder.get_object("MainWindow")
 
         # Get necessary objects
-        widgets = ["txtNote", "bAdd", "imgAdd", "eResizeR",
+        widgets = ["txtNote", "bAdd", "imgAdd", # "imgResizeR", "eResizeR",
                 "bLock", "imgLock", "imgUnlock", "imgClose", "imgDropdown",
                 "bClose", "confirmDelete", "movebox1", "movebox2"]
         for w in widgets:
             setattr(self, w, self.builder.get_object(w))
         self.style_contexts = [self.winMain.get_style_context(),
                 self.txtNote.get_style_context()]
+        # Enable resizing
+        self.winMain.set_resizable(True)
         # Update window-specific style. Global styles are loaded initially!
         self.update_style()
         self.update_font()
@@ -86,9 +88,6 @@ class StickyNote:
         self.bbody.end_not_undoable_action()
         self.txtNote.set_buffer(self.bbody)
         # Make resize work
-        self.winMain.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK)
-        self.winMain.connect("button-press-event", self.resize)
-        self.winMain.connect("motion-notify-event", self.resize_motion)
         # self.winMain.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         # self.eResizeR.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         # Move Window
@@ -98,9 +97,9 @@ class StickyNote:
         self.winMain.set_skip_pager_hint(True)
         self.winMain.show_all()
         # Mouse over
-        self.eResizeR.get_window().set_cursor(Gdk.Cursor.new_for_display(
-                    self.eResizeR.get_window().get_display(),
-                    Gdk.CursorType.BOTTOM_RIGHT_CORNER))
+        # self.eResizeR.get_window().set_cursor(Gdk.Cursor.new_for_display(
+        #            self.eResizeR.get_window().get_display(),
+        #            Gdk.CursorType.BOTTOM_RIGHT_CORNER))
         # Set locked state
         self.set_locked_state(self.locked)
 
@@ -156,18 +155,11 @@ class StickyNote:
                 event.y_root, event.get_time())
         return False
 
-    def resize(self, widget, event, *args):
-        """Action to begin resizing (by dragging) the window"""
-        # self.winMain.begin_resize_drag(Gdk.WindowEdge.SOUTH_EAST,
-                # event.button, event.x_root, event.y_root, event.get_time())
-        self.winMain.begin_resize_drag(Gdk.WindowEdge.ALL,
-            event.button, event.x_root, event.y_root, event.get_time())
-        return True
-        
-    def resize_motion(self, widget, event, *args):
-        """Action to resize window while dragging"""
-        self.winMain.resize(event.x_root, event.y_root)
-        return True
+    # def resize(self, widget, event, *args):
+    #     """Action to begin resizing (by dragging) the window"""
+    #     self.winMain.begin_resize_drag(Gdk.WindowEdge.SOUTH_EAST,
+    #             event.button, event.x_root, event.y_root, event.get_time())
+    #     return True
 
     def properties(self):
         """Get properties of the current note"""
