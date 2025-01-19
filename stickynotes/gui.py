@@ -65,7 +65,7 @@ class StickyNote:
         self.winMain = self.builder.get_object("MainWindow")
 
         # Get necessary objects
-        widgets = ["txtNote", "bAdd", "imgAdd", "imgResizeR", "eResizeR",
+        widgets = ["txtNote", "bAdd", "imgAdd", "eResizeR",
                 "bLock", "imgLock", "imgUnlock", "imgClose", "imgDropdown",
                 "bClose", "confirmDelete", "movebox1", "movebox2"]
         for w in widgets:
@@ -86,8 +86,11 @@ class StickyNote:
         self.bbody.end_not_undoable_action()
         self.txtNote.set_buffer(self.bbody)
         # Make resize work
-        self.winMain.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
-        self.eResizeR.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.winMain.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK)
+        self.winMain.connect("button-press-event", self.resize)
+        self.winMain.connect("motion-notify-event", self.resize_motion)
+        # self.winMain.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        # self.eResizeR.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         # Move Window
         self.winMain.move(*self.note.properties.get("position", (10,10)))
         self.winMain.resize(*self.note.properties.get("size", (200,150)))
@@ -155,8 +158,15 @@ class StickyNote:
 
     def resize(self, widget, event, *args):
         """Action to begin resizing (by dragging) the window"""
-        self.winMain.begin_resize_drag(Gdk.WindowEdge.SOUTH_EAST,
-                event.button, event.x_root, event.y_root, event.get_time())
+        # self.winMain.begin_resize_drag(Gdk.WindowEdge.SOUTH_EAST,
+                # event.button, event.x_root, event.y_root, event.get_time())
+        self.winMain.begin_resize_drag(Gdk.WindowEdge.ALL,
+            event.button, event.x_root, event.y_root, event.get_time())
+        return True
+        
+    def resize_motion(self, widget, event, *args):
+        """Action to resize window while dragging"""
+        self.winMain.resize(event.x_root, event.y_root)
         return True
 
     def properties(self):
