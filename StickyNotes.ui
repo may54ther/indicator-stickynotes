@@ -194,12 +194,7 @@
                 <property name="can_focus">False</property>
                 <signal name="button-press-event" handler="resize" swapped="no"/>
                 <child>
-                  <object class="GtkImage" id="imgResizeR">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="pixbuf">Icons/resizer.png</property>
-                    <signal name="button-press-event" handler="resize" swapped="no"/>
-                  </object>
+                  <!-- [REMOVED] imgResizeR -->
                 </child>
               </object>
               <packing>
