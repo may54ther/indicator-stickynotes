@@ -18,18 +18,15 @@
  * 
  */
 
-#main-window, #txt-note, #txt-note text
+#main-window, #txt-note, #txt-note text { background-color: $bgcolor_hex; color: $text_color; }
+#txt-note text selection { color: $bgcolor_hex; background-color: $text_color; }
+
+#main-window { opacity: .8}
+ #main-window, #txt-note
 {
-    background-color: $bgcolor_hex;
-    color: $text_color;
+   border-radius: 8px
 }
 
-#topBox {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-#txt-note text selection
-{
-    color: $bgcolor_hex;
-    background-color: $text_color;
-}
+ #main-window{ border: 5px solid #00ff00; background-color:#f0f }
+ #txt-note{ border: 5px solid #ff0000; }
+ #txt-note text { border: 5px solid #0000ff; }
