@@ -6,38 +6,38 @@
 #main-window {
     background-color: $bgcolor_hex;
     color: $text_color;
-    border-radius: 14px;
-    border: 1px solid alpha($text_color, 0.18);
+    border-radius: 18px;
+    border: 1px solid alpha($text_color, 0.16);
 }
 
 #mainBox {
     background-color: $bgcolor_hex;
-    border-radius: 14px;
-}
-
-#topBox,
-#bottomBox {
-    background-color: alpha($text_color, 0.06);
-    min-height: 26px;
+    border-radius: 18px;
 }
 
 #topBox {
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
-    padding: 2px 4px;
+    background-color: alpha(#ffffff, 0.26);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom: 1px solid alpha($text_color, 0.08);
+    padding: 8px 12px;
+    min-height: 42px;
 }
 
 #bottomBox {
-    border-bottom-left-radius: 14px;
-    border-bottom-right-radius: 14px;
-    min-height: 8px;
+    background-color: alpha(#ffffff, 0.18);
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    border-top: 1px solid alpha($text_color, 0.10);
+    padding: 8px 12px;
+    min-height: 42px;
 }
 
 #txt-note {
     background-color: $bgcolor_hex;
     color: $text_color;
     border: 0;
-    padding: 10px;
+    padding: 14px 16px;
 }
 
 #txt-note text {
@@ -58,15 +58,22 @@
 button {
     border: 0;
     border-radius: 999px;
-    padding: 4px;
+    padding: 6px;
     background: transparent;
     box-shadow: none;
+    color: $text_color;
 }
 
 button:hover {
-    background-color: alpha($text_color, 0.12);
+    background-color: alpha($text_color, 0.10);
 }
 
 button:active {
-    background-color: alpha($text_color, 0.20);
+    background-color: alpha($text_color, 0.18);
+}
+
+#formatButton {
+    font-weight: 700;
+    padding: 4px 10px;
+    margin-right: 8px;
 }
