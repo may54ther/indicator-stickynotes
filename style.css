@@ -1,32 +1,72 @@
-/* 
- * Copyright © 2012-2018 Umang Varma <umang.me@gmail.com>
- * 
- * This file is part of indicator-stickynotes.
- * 
- * indicator-stickynotes is free software: you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * indicator-stickynotes is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * indicator-stickynotes.  If not, see <http://www.gnu.org/licenses/>.
- * 
+/*
+ * Per-note styling for indicator-stickynotes.
+ * Values wrapped in $... are substituted from the note category settings.
  */
 
-#main-window, #txt-note, #txt-note text { background-color: $bgcolor_hex; color: $text_color; }
-#txt-note text selection { color: $bgcolor_hex; background-color: $text_color; }
-
-#main-window { opacity: .8}
- #main-window, #txt-note
-{
-   border-radius: 8px
+#main-window {
+    background-color: $bgcolor_hex;
+    color: $text_color;
+    border-radius: 14px;
+    border: 1px solid alpha($text_color, 0.18);
 }
 
- #main-window{ border: 5px solid #00ff00; background-color:#f0f }
- #txt-note{ border: 5px solid #ff0000; }
- #txt-note text { border: 5px solid #0000ff; }
+#mainBox {
+    background-color: $bgcolor_hex;
+    border-radius: 14px;
+}
+
+#topBox,
+#bottomBox {
+    background-color: alpha($text_color, 0.06);
+    min-height: 26px;
+}
+
+#topBox {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    padding: 2px 4px;
+}
+
+#bottomBox {
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    min-height: 8px;
+}
+
+#txt-note {
+    background-color: $bgcolor_hex;
+    color: $text_color;
+    border: 0;
+    padding: 10px;
+}
+
+#txt-note text {
+    background-color: $bgcolor_hex;
+    color: $text_color;
+}
+
+#txt-note text selection {
+    color: $bgcolor_hex;
+    background-color: $text_color;
+}
+
+#note-scroll {
+    background-color: $bgcolor_hex;
+    border: 0;
+}
+
+button {
+    border: 0;
+    border-radius: 999px;
+    padding: 4px;
+    background: transparent;
+    box-shadow: none;
+}
+
+button:hover {
+    background-color: alpha($text_color, 0.12);
+}
+
+button:active {
+    background-color: alpha($text_color, 0.20);
+}
