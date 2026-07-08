@@ -1,26 +1,27 @@
 # Copyright © 2012-2015 Umang Varma <umang.me@gmail.com>
-# 
+#
 # This file is part of indicator-stickynotes.
-# 
+#
 # indicator-stickynotes is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or (at your
 # option) any later version.
-# 
-# indicator-stickynotes is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-# more details.
-# 
-# You should have received a copy of the GNU General Public License along with
-# indicator-stickynotes.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-import uuid
 import json
+import os
+import shutil
+import uuid
 from os.path import expanduser
 
 from stickynotes.info import FALLBACK_PROPERTIES
+
+
+NOTE_BODY_FILE = "note.md"
+NOTE_META_FILE = "meta.json"
+SETTINGS_FILE_NAME = "settings.json"
+CATEGORIES_FILE_NAME = "categories.json"
+
 
 class Note:
     def __init__(self, content=None, gui_class=None, noteset=None,
@@ -28,20 +29,32 @@ class Note:
         self.gui_class = gui_class
         self.noteset = noteset
         content = content or {}
-        self.uuid = content.get('uuid')
-        self.body = content.get('body','')
+        self.uuid = content.get('uuid') or str(uuid.uuid4())
+        self.body = content.get('body', '')
         self.properties = content.get("properties", {})
         self.category = category or content.get("cat", "")
-        if not self.category in self.noteset.categories:
+        if self.noteset and not self.category in self.noteset.categories:
             self.category = ""
-        last_modified = content.get('last_modified')
+        last_modified = content.get('last_modified') or content.get('updated_at')
         if last_modified:
-            self.last_modified = datetime.strptime(last_modified,
-                    "%Y-%m-%dT%H:%M:%S")
+            self.last_modified = self._parse_datetime(last_modified)
         else:
             self.last_modified = datetime.now()
+        self.created_at = self._parse_datetime(
+            content.get('created_at'), fallback=self.last_modified)
         # Don't create GUI until show is called
         self.gui = None
+
+    @staticmethod
+    def _parse_datetime(value, fallback=None):
+        if not value:
+            return fallback or datetime.now()
+        for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S"):
+            try:
+                return datetime.strptime(value, fmt)
+            except ValueError:
+                pass
+        return fallback or datetime.now()
 
     def extract(self):
         if not self.uuid:
@@ -49,18 +62,25 @@ class Note:
         if self.gui != None:
             self.gui.update_note()
             self.properties = self.gui.properties()
-        return {"uuid":self.uuid, "body":self.body,
-                "last_modified":self.last_modified.strftime(
-                    "%Y-%m-%dT%H:%M:%S"), "properties":self.properties,
+        return {"uuid": self.uuid, "body": self.body,
+                "created_at": self.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
+                "last_modified": self.last_modified.strftime(
+                    "%Y-%m-%dT%H:%M:%S"), "properties": self.properties,
                 "cat": self.category}
 
-    def update(self,body=None):
+    def meta(self):
+        data = self.extract().copy()
+        data.pop("body", None)
+        return data
+
+    def update(self, body=None):
         if not body == None:
             self.body = body
             self.last_modified = datetime.now()
 
     def delete(self):
         self.noteset.notes.remove(self)
+        self.noteset.delete_note_files(self)
         self.noteset.save()
         del self
 
@@ -96,32 +116,134 @@ class NoteSet:
         self.data_file = data_file
         self.indicator = indicator
 
+    @property
+    def data_path(self):
+        return expanduser(self.data_file)
+
+    @property
+    def notes_dir(self):
+        return os.path.join(self.data_path, "notes")
+
+    @property
+    def settings_path(self):
+        return os.path.join(self.data_path, SETTINGS_FILE_NAME)
+
+    @property
+    def categories_path(self):
+        return os.path.join(self.data_path, CATEGORIES_FILE_NAME)
+
     def _loads_updater(self, dnoteset):
         """Parses old versions of the Notes structure and updates them"""
         return dnoteset
 
     def loads(self, snoteset):
-        """Loads notes into their respective objects"""
-        notes = self._loads_updater(json.loads(snoteset))
+        """Loads notes into their respective objects from the legacy JSON form."""
+        notes = self._loads_updater(json.loads(snoteset or '{}'))
         self.properties = notes.get("properties", {})
         self.categories = notes.get("categories", {})
         self.notes = [Note(note, gui_class=self.gui_class, noteset=self)
-                for note in notes.get("notes",[])]
+                for note in notes.get("notes", [])]
 
     def dumps(self):
-        return json.dumps({"notes":[x.extract() for x in self.notes],
-            "properties": self.properties, "categories": self.categories})
+        """Export notes in the legacy single-file JSON form."""
+        return json.dumps({"notes": [x.extract() for x in self.notes],
+            "properties": self.properties, "categories": self.categories},
+            ensure_ascii=False, indent=2)
+
+    def _ensure_storage_dir(self):
+        data_path = self.data_path
+        if os.path.isfile(data_path):
+            backup = data_path + ".legacy-backup"
+            if not os.path.exists(backup):
+                shutil.copy2(data_path, backup)
+            os.remove(data_path)
+        os.makedirs(self.notes_dir, exist_ok=True)
+
+    def _write_json(self, path, data):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, mode='w', encoding='utf-8') as fsock:
+            json.dump(data, fsock, ensure_ascii=False, indent=2)
+            fsock.write("\n")
+
+    def _read_json(self, path, fallback):
+        if not os.path.exists(path):
+            return fallback
+        with open(path, encoding='utf-8') as fsock:
+            return json.load(fsock)
+
+    def _note_path(self, note):
+        return os.path.join(self.notes_dir, note.uuid)
+
+    def _save_note(self, note):
+        note_dir = self._note_path(note)
+        os.makedirs(note_dir, exist_ok=True)
+        with open(os.path.join(note_dir, NOTE_BODY_FILE), mode='w',
+                encoding='utf-8') as fsock:
+            fsock.write(note.body or '')
+        self._write_json(os.path.join(note_dir, NOTE_META_FILE), note.meta())
+
+    def delete_note_files(self, note):
+        shutil.rmtree(self._note_path(note), ignore_errors=True)
 
     def save(self, path=''):
-        output = self.dumps()
-        with open(path or expanduser(self.data_file),
-                mode='w', encoding='utf-8') as fsock:
-            fsock.write(output)
+        # Explicit paths are treated as export targets for backwards compatibility.
+        if path:
+            with open(path, mode='w', encoding='utf-8') as fsock:
+                fsock.write(self.dumps())
+            return
+
+        self._ensure_storage_dir()
+        self._write_json(self.settings_path, self.properties)
+        self._write_json(self.categories_path, self.categories)
+
+        active_ids = set()
+        for note in self.notes:
+            active_ids.add(note.uuid)
+            self._save_note(note)
+
+        # Remove orphaned note directories from deleted notes.
+        if os.path.isdir(self.notes_dir):
+            for name in os.listdir(self.notes_dir):
+                note_path = os.path.join(self.notes_dir, name)
+                if os.path.isdir(note_path) and name not in active_ids:
+                    shutil.rmtree(note_path, ignore_errors=True)
+
+    def _open_directory_storage(self, path):
+        self.properties = self._read_json(
+            os.path.join(path, SETTINGS_FILE_NAME), {})
+        self.categories = self._read_json(
+            os.path.join(path, CATEGORIES_FILE_NAME), {})
+        self.notes = []
+
+        notes_dir = os.path.join(path, "notes")
+        if not os.path.isdir(notes_dir):
+            return
+
+        for note_id in sorted(os.listdir(notes_dir)):
+            note_path = os.path.join(notes_dir, note_id)
+            if not os.path.isdir(note_path):
+                continue
+            meta_path = os.path.join(note_path, NOTE_META_FILE)
+            body_path = os.path.join(note_path, NOTE_BODY_FILE)
+            meta = self._read_json(meta_path, {})
+            meta.setdefault("uuid", note_id)
+            if os.path.exists(body_path):
+                with open(body_path, encoding='utf-8') as fsock:
+                    meta["body"] = fsock.read()
+            self.notes.append(Note(meta, gui_class=self.gui_class,
+                    noteset=self))
 
     def open(self, path=''):
-        with open(path or expanduser(self.data_file), 
-                encoding='utf-8') as fsock:
+        data_path = expanduser(path or self.data_file)
+        if os.path.isdir(data_path):
+            self._open_directory_storage(data_path)
+            return
+
+        with open(data_path, encoding='utf-8') as fsock:
             self.loads(fsock.read())
+        # Migrate legacy single-file JSON to the new directory layout.
+        if not path:
+            self.save()
 
     def load_fresh(self):
         """Load empty data"""
@@ -129,14 +251,14 @@ class NoteSet:
         self.new()
 
     def merge(self, data):
-        """Update notes based on new data"""
+        """Update notes based on imported legacy JSON data"""
         jdata = self._loads_updater(json.loads(data))
         self.hideall()
         # update categories
         if "categories" in jdata:
             self.categories.update(jdata["categories"])
         # make a dictionary of notes so we can modify existing notes
-        dnotes = {n.uuid : n for n in self.notes}
+        dnotes = {n.uuid: n for n in self.notes}
         for newnote in jdata.get("notes", []):
             if "uuid" in newnote and newnote["uuid"] in dnotes:
                 # Update notes that are already in the noteset
@@ -150,13 +272,15 @@ class NoteSet:
             else:
                 # otherwise create a new note
                 if "uuid" in newnote:
-                    uuid = newnote["uuid"]
+                    note_uuid = newnote["uuid"]
                 else:
-                    uuid = str(uuid.uuid4())
-                dnotes[uuid] = Note(newnote, gui_class=self.gui_class,
+                    note_uuid = str(uuid.uuid4())
+                newnote["uuid"] = note_uuid
+                dnotes[note_uuid] = Note(newnote, gui_class=self.gui_class,
                         noteset=self)
         # copy notes over from dictionary to list
         self.notes = list(dnotes.values())
+        self.save()
         self.showall(reload_from_backend=True)
 
     def new(self):
@@ -165,6 +289,7 @@ class NoteSet:
                 category=self.properties.get("default_cat", ""))
         self.notes.append(note)
         note.show()
+        self.save()
         return note
 
     def showall(self, *args, **kwargs):
@@ -192,6 +317,7 @@ class NoteSet:
         else:
             raise ValueError("Unknown property")
 
+
 class dGUI:
     """Dummy GUI"""
     def __init__(self, *args, **kwargs):
@@ -204,4 +330,3 @@ class dGUI:
         pass
     def properties(self):
         return None
-
