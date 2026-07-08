@@ -31,8 +31,8 @@
     <property name="name">main-window</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Sticky Notes</property>
-    <property name="default_width">240</property>
-    <property name="default_height">180</property>
+    <property name="default_width">360</property>
+    <property name="default_height">300</property>
     <property name="hide_titlebar_when_maximized">True</property>
     <property name="type_hint">utility</property>
     <property name="skip_taskbar_hint">True</property>
@@ -49,41 +49,7 @@
             <property name="name">topBox</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="valign">start</property>
             <signal name="button-press-event" handler="move" swapped="no"/>
-            <child>
-              <object class="GtkButton" id="bClose">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="focus_on_click">False</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Delete</property>
-                <property name="image">imgClose</property>
-                <property name="relief">none</property>
-                <signal name="clicked" handler="delete" swapped="no"/>
-                <accelerator key="w" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEventBox" id="movebox1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <signal name="button-press-event" handler="move" swapped="no"/>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkButton" id="bAdd">
                 <property name="visible">True</property>
@@ -99,8 +65,20 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="pack_type">end</property>
                 <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEventBox" id="movebox1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <signal name="button-press-event" handler="move" swapped="no"/>
+                <child><placeholder/></child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -118,26 +96,26 @@
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="bLock">
+              <object class="GtkButton" id="bClose">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="focus_on_click">False</property>
                 <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Lock</property>
-                <property name="image">imgUnlock</property>
+                <property name="tooltip_text" translatable="yes">Delete</property>
+                <property name="image">imgClose</property>
                 <property name="relief">none</property>
-                <signal name="clicked" handler="lock_clicked" swapped="no"/>
-                <accelerator key="l" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                <signal name="clicked" handler="delete" swapped="no"/>
+                <accelerator key="w" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>
@@ -166,10 +144,10 @@
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
                 <property name="wrap_mode">word_char</property>
-                <property name="left_margin">10</property>
-                <property name="right_margin">10</property>
-                <property name="top_margin">8</property>
-                <property name="bottom_margin">8</property>
+                <property name="left_margin">16</property>
+                <property name="right_margin">16</property>
+                <property name="top_margin">14</property>
+                <property name="bottom_margin">14</property>
                 <property name="tab_width">4</property>
                 <property name="indent_on_tab">False</property>
                 <property name="show_line_numbers">False</property>
@@ -190,19 +168,92 @@
             <property name="can_focus">False</property>
             <signal name="button-press-event" handler="move" swapped="no"/>
             <child>
+              <object class="GtkButton" id="bBold">
+                <property name="name">formatButton</property>
+                <property name="label">B</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Bold</property>
+                <signal name="clicked" handler="bold_clicked" swapped="no"/>
+                <accelerator key="b" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+              <packing><property name="expand">False</property><property name="fill">False</property><property name="position">0</property></packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="bItalic">
+                <property name="name">formatButton</property>
+                <property name="label">I</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Italic</property>
+                <signal name="clicked" handler="italic_clicked" swapped="no"/>
+                <accelerator key="i" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+              <packing><property name="expand">False</property><property name="fill">False</property><property name="position">1</property></packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="bUnderline">
+                <property name="name">formatButton</property>
+                <property name="label">U</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Underline</property>
+                <signal name="clicked" handler="underline_clicked" swapped="no"/>
+                <accelerator key="u" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+              <packing><property name="expand">False</property><property name="fill">False</property><property name="position">2</property></packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="bStrike">
+                <property name="name">formatButton</property>
+                <property name="label">S</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Strikethrough</property>
+                <signal name="clicked" handler="strike_clicked" swapped="no"/>
+                <accelerator key="x" signal="clicked" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK"/>
+              </object>
+              <packing><property name="expand">False</property><property name="fill">False</property><property name="position">3</property></packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="bList">
+                <property name="name">formatButton</property>
+                <property name="label">•</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Bullet List</property>
+                <signal name="clicked" handler="list_clicked" swapped="no"/>
+                <accelerator key="8" signal="clicked" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK"/>
+              </object>
+              <packing><property name="expand">False</property><property name="fill">False</property><property name="position">4</property></packing>
+            </child>
+            <child>
               <object class="GtkEventBox" id="movebox2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <signal name="button-press-event" handler="move" swapped="no"/>
-                <child>
-                  <placeholder/>
-                </child>
+                <child><placeholder/></child>
               </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+              <packing><property name="expand">True</property><property name="fill">True</property><property name="position">5</property></packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="bLock">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Lock</property>
+                <property name="image">imgUnlock</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="lock_clicked" swapped="no"/>
+                <accelerator key="l" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+              <packing><property name="expand">False</property><property name="fill">False</property><property name="pack_type">end</property><property name="position">0</property></packing>
             </child>
           </object>
           <packing>
