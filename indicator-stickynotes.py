@@ -39,6 +39,11 @@ from shutil import copyfile, SameFileError
 import socket
 import sys
 
+
+def menu_item(label):
+    return Gtk.MenuItem(label=label)
+
+
 def save_required(f):
     """Wrapper for functions that require a save after execution"""
     @wraps(f)
@@ -47,6 +52,7 @@ def save_required(f):
         self.save()
         return ret
     return _wrapper
+
 
 class IndicatorStickyNotes:
     def __init__(self, args = None):
@@ -91,7 +97,7 @@ class IndicatorStickyNotes:
         self.ind.set_title(_("Sticky Notes"))
         # Create Menu
         self.menu = Gtk.Menu()
-        self.mNewNote = Gtk.MenuItem(_("New Note"))
+        self.mNewNote = menu_item(_("New Note"))
         self.menu.append(self.mNewNote)
         self.mNewNote.connect("activate", self.new_note, None)
         self.mNewNote.show()
@@ -100,12 +106,12 @@ class IndicatorStickyNotes:
         self.menu.append(s)
         s.show()
 
-        self.mShowAll = Gtk.MenuItem(_("Show All"))
+        self.mShowAll = menu_item(_("Show All"))
         self.menu.append(self.mShowAll)
         self.mShowAll.connect("activate", self.showall, None)
         self.mShowAll.show()
 
-        self.mHideAll = Gtk.MenuItem(_("Hide All"))
+        self.mHideAll = menu_item(_("Hide All"))
         self.menu.append(self.mHideAll)
         self.mHideAll.connect("activate", self.hideall, None)
         self.mHideAll.show()
@@ -114,12 +120,12 @@ class IndicatorStickyNotes:
         self.menu.append(s)
         s.show()
 
-        self.mLockAll = Gtk.MenuItem(_("Lock All"))
+        self.mLockAll = menu_item(_("Lock All"))
         self.menu.append(self.mLockAll)
         self.mLockAll.connect("activate", self.lockall, None)
         self.mLockAll.show()
 
-        self.mUnlockAll = Gtk.MenuItem(_("Unlock All"))
+        self.mUnlockAll = menu_item(_("Unlock All"))
         self.menu.append(self.mUnlockAll)
         self.mUnlockAll.connect("activate", self.unlockall, None)
         self.mUnlockAll.show()
@@ -128,12 +134,12 @@ class IndicatorStickyNotes:
         self.menu.append(s)
         s.show()
 
-        self.mExport = Gtk.MenuItem(_("Export Data"))
+        self.mExport = menu_item(_("Export Data"))
         self.menu.append(self.mExport)
         self.mExport.connect("activate", self.export_datafile, None)
         self.mExport.show()
 
-        self.mImport = Gtk.MenuItem(_("Import Data"))
+        self.mImport = menu_item(_("Import Data"))
         self.menu.append(self.mImport)
         self.mImport.connect("activate", self.import_datafile, None)
         self.mImport.show()
@@ -142,12 +148,12 @@ class IndicatorStickyNotes:
         self.menu.append(s)
         s.show()
 
-        self.mAbout = Gtk.MenuItem(_("About"))
+        self.mAbout = menu_item(_("About"))
         self.menu.append(self.mAbout)
         self.mAbout.connect("activate", self.show_about, None)
         self.mAbout.show()
 
-        self.mSettings = Gtk.MenuItem(_("Settings"))
+        self.mSettings = menu_item(_("Settings"))
         self.menu.append(self.mSettings)
         self.mSettings.connect("activate", self.show_settings, None)
         self.mSettings.show()
@@ -156,7 +162,7 @@ class IndicatorStickyNotes:
         self.menu.append(s)
         s.show()
 
-        self.mQuit = Gtk.MenuItem(_("Quit"))
+        self.mQuit = menu_item(_("Quit"))
         self.menu.append(self.mQuit)
         self.mQuit.connect("activate", Gtk.main_quit, None)
         self.mQuit.show()
@@ -251,6 +257,7 @@ class IndicatorStickyNotes:
 
     def save(self):
         self.nset.save()
+
 
 def main():
     # Avoid duplicate process
