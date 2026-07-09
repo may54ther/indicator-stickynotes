@@ -41,7 +41,7 @@ class StickyNote:
 		widgets = [
 			"txtNote", "bAdd", "imgAdd", "bLock", "imgLock", "imgUnlock",
 			"imgClose", "imgDropdown", "bClose", "movebox1", "movebox2",
-			"bBold", "bItalic", "bUnderline", "bStrike", "bList",
+			"bBold", "bItalic", "bUnderline", "bStrike", "bList", "resizeGrip",
 		]
 		for w in widgets:
 			setattr(self, w, self.builder.get_object(w))
@@ -52,6 +52,10 @@ class StickyNote:
 		for button in (self.bAdd, self.bClose, self.bLock, self.bBold, self.bItalic, self.bUnderline, self.bStrike, self.bList):
 			if button:
 				button.set_size_request(1, 1)
+		if self.resizeGrip:
+			self.resizeGrip.set_size_request(18, 18)
+			self.resizeGrip.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+			self.resizeGrip.get_style_context().add_provider(self.css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 		self.winMain.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK)
 		self.winMain.connect("motion-notify-event", self.on_motion_notify)
 		self.winMain.connect("button-press-event", self.on_button_press)
@@ -116,6 +120,12 @@ class StickyNote:
 	def on_button_release(self, widget, event):
 		self.resize_edge = None
 
+	def resize(self, widget, event):
+		if event.button == Gdk.BUTTON_PRIMARY:
+			self.winMain.begin_resize_drag(Gdk.WindowEdge.SOUTH_EAST, event.button, event.x_root, event.y_root, event.time)
+			return True
+		return False
+
 	def update_note(self):
 		self.note.update(self.bbody.get_text(self.bbody.get_start_iter(), self.bbody.get_end_iter(), True))
 
@@ -163,7 +173,7 @@ class StickyNote:
 		aot.connect("toggled", self.malways_on_top_toggled)
 		self.menu.append(aot)
 		aot.show()
-		mset = Gtk.MenuItem(_("Settings"))
+		mset = Gtk.MenuItem(label=_("Settings"))
 		mset.connect("activate", self.noteset.indicator.show_settings)
 		self.menu.append(mset)
 		mset.show()
