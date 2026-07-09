@@ -1,43 +1,42 @@
 /*
  * Per-note styling for indicator-stickynotes.
- * Values wrapped in $... are substituted from the note category settings.
+ * Keep this GTK3-safe: avoid alpha()/transparent backgrounds because some
+ * Ubuntu 20.04 themes render undecorated windows with black gaps.
  */
 
 #main-window {
     background-color: $bgcolor_hex;
     color: $text_color;
-    border-radius: 18px;
-    border: 1px solid alpha($text_color, 0.16);
+    border-radius: 12px;
+    border: 1px solid $bgcolor_hex;
 }
 
 #mainBox {
     background-color: $bgcolor_hex;
-    border-radius: 18px;
+    border-radius: 12px;
 }
 
 #topBox {
-    background-color: alpha(#ffffff, 0.26);
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    border-bottom: 1px solid alpha($text_color, 0.08);
-    padding: 8px 12px;
-    min-height: 42px;
+    background-color: $bgcolor_hex;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 2px 4px;
+    min-height: 24px;
 }
 
 #bottomBox {
-    background-color: alpha(#ffffff, 0.18);
-    border-bottom-left-radius: 18px;
-    border-bottom-right-radius: 18px;
-    border-top: 1px solid alpha($text_color, 0.10);
-    padding: 8px 12px;
-    min-height: 42px;
+    background-color: $bgcolor_hex;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    padding: 2px 4px;
+    min-height: 24px;
 }
 
 #txt-note {
     background-color: $bgcolor_hex;
     color: $text_color;
     border: 0;
-    padding: 14px 16px;
+    padding: 6px 8px;
 }
 
 #txt-note text {
@@ -57,23 +56,28 @@
 
 button {
     border: 0;
-    border-radius: 999px;
-    padding: 6px;
-    background: transparent;
+    border-radius: 8px;
+    padding: 1px 3px;
+    margin: 0;
+    background-color: $bgcolor_hex;
     box-shadow: none;
     color: $text_color;
+    min-width: 18px;
+    min-height: 18px;
 }
 
 button:hover {
-    background-color: alpha($text_color, 0.10);
+    background-color: $bgcolor_hex;
 }
 
 button:active {
-    background-color: alpha($text_color, 0.18);
+    background-color: $bgcolor_hex;
 }
 
 #formatButton {
     font-weight: 700;
-    padding: 4px 10px;
-    margin-right: 8px;
+    padding: 1px 5px;
+    margin-right: 2px;
+    min-width: 18px;
+    min-height: 18px;
 }
