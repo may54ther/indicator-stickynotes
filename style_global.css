@@ -1,11 +1,4 @@
 /*
  * Global GTK3 styling for indicator-stickynotes.
- * Avoid transparent widget backgrounds on Ubuntu 20.04 to prevent black gaps
- * around undecorated note windows.
+ * Keep this file minimal to avoid deprecated GTK theme properties on Ubuntu 20.04.
  */
-
-GtkButton {
-    -GtkButton-default-border: 0;
-    -GtkButton-default-outside-border: 0;
-    -GtkButton-inner-border: 0;
-}
