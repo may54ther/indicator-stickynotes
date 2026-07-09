@@ -47,8 +47,11 @@ class StickyNote:
 			setattr(self, w, self.builder.get_object(w))
 		self.style_contexts = [self.winMain.get_style_context(), self.txtNote.get_style_context()]
 		self.winMain.set_resizable(True)
-		self.winMain.set_size_request(140, 120)
+		self.winMain.set_size_request(96, 80)
 		self.txtNote.set_size_request(1, 1)
+		for button in (self.bAdd, self.bClose, self.bLock, self.bBold, self.bItalic, self.bUnderline, self.bStrike, self.bList):
+			if button:
+				button.set_size_request(1, 1)
 		self.winMain.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK)
 		self.winMain.connect("motion-notify-event", self.on_motion_notify)
 		self.winMain.connect("button-press-event", self.on_button_press)
@@ -63,7 +66,7 @@ class StickyNote:
 		self.bbody.end_not_undoable_action()
 		self.txtNote.set_buffer(self.bbody)
 		self.winMain.move(*self.note.properties.get("position", (10, 10)))
-		self.winMain.resize(*self.note.properties.get("size", (360, 300)))
+		self.winMain.resize(*self.note.properties.get("size", (260, 200)))
 		self.winMain.set_skip_pager_hint(True)
 		self.winMain.show_all()
 		self.set_locked_state(self.locked)
@@ -124,7 +127,7 @@ class StickyNote:
 		prop = {"position": self.winMain.get_position(), "size": self.winMain.get_size(), "locked": self.locked}
 		if not self.winMain.get_visible():
 			prop["position"] = self.note.properties.get("position", (10, 10))
-			prop["size"] = self.note.properties.get("size", (360, 300))
+			prop["size"] = self.note.properties.get("size", (260, 200))
 		return prop
 
 	def update_font(self):
