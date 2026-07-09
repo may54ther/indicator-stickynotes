@@ -56,7 +56,7 @@
                 <property name="has_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
-                <property name="wrap_mode">word_char</property>
+                <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
                 <property name="top_margin">4</property>
