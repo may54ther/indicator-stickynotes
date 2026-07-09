@@ -1,33 +1,27 @@
 /*
  * Per-note styling for indicator-stickynotes.
- * Keep this GTK3-safe: avoid alpha()/transparent backgrounds because some
- * Ubuntu 20.04 themes render undecorated windows with black gaps.
+ * Ubuntu 20.04 + GTK3 does not reliably render rounded undecorated windows.
+ * Keep the window rectangular to avoid black gaps around note edges.
  */
 
 #main-window {
     background-color: $bgcolor_hex;
     color: $text_color;
-    border-radius: 12px;
     border: 1px solid $bgcolor_hex;
 }
 
 #mainBox {
     background-color: $bgcolor_hex;
-    border-radius: 12px;
 }
 
 #topBox {
     background-color: $bgcolor_hex;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
     padding: 2px 4px;
     min-height: 24px;
 }
 
 #bottomBox {
     background-color: $bgcolor_hex;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
     padding: 2px 4px;
     min-height: 24px;
 }
@@ -54,9 +48,20 @@
     border: 0;
 }
 
+#resizeGrip {
+    background-color: $bgcolor_hex;
+    min-width: 18px;
+    min-height: 18px;
+}
+
+#resizeLabel {
+    color: $text_color;
+    font-size: 10px;
+}
+
 button {
     border: 0;
-    border-radius: 8px;
+    border-radius: 0;
     padding: 1px 3px;
     margin: 0;
     background-color: $bgcolor_hex;
