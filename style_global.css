@@ -1,13 +1,8 @@
 /*
  * Global GTK3 styling for indicator-stickynotes.
+ * Avoid transparent widget backgrounds on Ubuntu 20.04 to prevent black gaps
+ * around undecorated note windows.
  */
-
-GtkSourceView,
-GtkButton,
-GtkEventBox,
-GtkScrolledWindow {
-    background: transparent;
-}
 
 GtkButton {
     -GtkButton-default-border: 0;
