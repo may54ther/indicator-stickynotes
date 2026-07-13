@@ -43,10 +43,36 @@
     background-color: $text_color;
 }
 
+/*
+ * GtkSourceView owns separate native/CSS nodes for the text border and gutter.
+ * They can become visible only after the vertical adjustment becomes scrollable,
+ * which appears as a solid black strip on the left side of the editor.
+ */
+#txt-note border,
+#txt-note border.left,
+#txt-note border.right,
+#txt-note border.top,
+#txt-note border.bottom,
+#txt-note gutter,
+#txt-note gutter.left,
+#txt-note gutter.right,
+#txt-note gutter renderer {
+    background-color: $bgcolor_hex;
+    background-image: none;
+    border: 0;
+    box-shadow: none;
+    min-width: 0;
+    padding: 0;
+}
+
 #note-scroll,
 #note-scroll viewport,
 #note-scroll undershoot,
+#note-scroll undershoot.left,
+#note-scroll undershoot.right,
 #note-scroll overshoot,
+#note-scroll overshoot.left,
+#note-scroll overshoot.right,
 #note-scroll scrollbar,
 #note-scroll scrollbar trough {
     background-color: $bgcolor_hex;
