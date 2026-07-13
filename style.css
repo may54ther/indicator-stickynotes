@@ -81,6 +81,14 @@
     box-shadow: none;
 }
 
+/*
+ * Some GTK3 themes expose a native black edge only while the vertical
+ * scrollbar is present. Paint over that edge with the current note color.
+ */
+#note-scroll {
+    box-shadow: inset 7px 0 0 $bgcolor_hex;
+}
+
 #note-scroll scrollbar.vertical {
     min-width: 8px;
 }
